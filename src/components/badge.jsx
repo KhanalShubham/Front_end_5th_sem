@@ -1,6 +1,4 @@
-"use client"
-
-export default function Badge({ children, variant = "primary", className = "" }) {
+const Badge = ({ children, variant = "primary", className = "" }) => {
   const variants = {
     primary: "bg-green-100 text-green-600",
     secondary: "bg-gray-100 text-gray-600",
@@ -15,3 +13,5 @@ export default function Badge({ children, variant = "primary", className = "" })
     </span>
   )
 }
+
+export default Badge

@@ -1,6 +1,6 @@
 "use client"
 
-export default function Button({
+const Button = ({
   children,
   variant = "primary",
   size = "medium",
@@ -8,7 +8,7 @@ export default function Button({
   disabled = false,
   onClick,
   ...props
-}) {
+}) => {
   const baseClasses =
     "font-medium rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0"
 
@@ -36,3 +36,5 @@ export default function Button({
     </button>
   )
 }
+
+export default Button
