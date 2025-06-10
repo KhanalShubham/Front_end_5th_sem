@@ -1,25 +1,20 @@
+import {useMutation} from '@tanstack/react-query';
 
-export const UserRegisterUser=()=>{
-    const [isLoading, setIsLoading]= useState(false);
-    const [error, setError]= useState(null);
-    const [data, setData]= useState(null);
+import { registerUserService } from '../services/authServices';
+import { toast } from 'react-toastify';
 
-    const register=async(FormData)=>{
-        setIsLoading(true)
-        setError(null);
-        setData(null);
-        try {
-            const response = await registerUserService(FormData);
-            setData(response);
-            toast.success(response.message || "Registration successful");
-        } catch (error) {
-            const errorMessage = error.response?.data?.message || "Registration failed";
-            setError(errorMessage);
-            toast.error(errorMessage);
-        } finally {
-            setIsLoading(false);
+export const UserRegisterUserTan=()=>{
+    return useMutation(
+        {
+            mutationFn: registerUserService,
+            mutationKey: ['register'],
+            onSuccess:(data)=>{
+                toast.success(data.message || "Registration successful");
+            },
+            onError:(error)=>{
+                const errorMessage = error.response?.data?.message || "Registration failed";
+                toast.error(errorMessage);
+            }
         }
-    }
-    return { register, isLoading, error, data };
-
+    )
 }
