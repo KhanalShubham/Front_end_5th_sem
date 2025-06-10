@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL=import.meta.env.VITE_API_BASE_URL || 'loclhost:5050/api' //fallback
+const API_URL=import.meta.env.VITE_API_BASE_URL || 
+'localhost:5050/api' //fallback
 
 const instance=axios.create(
     {
