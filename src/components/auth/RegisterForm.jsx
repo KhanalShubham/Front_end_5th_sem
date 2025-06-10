@@ -2,12 +2,12 @@
 
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import AuthLayout from "../components/authlayout"
-import Input from "../components/ui/Input"
-import PasswordInput from "../components/ui/PassowrdInput"
-import Checkbox from "../components/ui/checkbox"
-import Button from "../components/buttons"
-import baby from '../assets/images/baby.png'
+import AuthLayout from "../authlayout"
+import Input from "../ui/Input"
+import PasswordInput from "../ui/PassowrdInput"
+import Checkbox from "../ui/checkbox"
+import baby from "../../assets/images/baby.png"
+import Button from "../buttons"
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
