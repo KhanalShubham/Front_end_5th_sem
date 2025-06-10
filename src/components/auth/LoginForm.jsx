@@ -1,120 +1,144 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Link } from "react-router-dom"
-import AuthLayout from "../authlayout"
-import Input from "../ui/Input"
-import PasswordInput from "../ui/PassowrdInput"
-import Checkbox from "../ui/checkbox"
-import Button from "../buttons"
-import baby from '../../assets/images/baby.png'
-import { Eye, EyeOff } from "lucide-react"
+import { useContext } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import {toast} from "react-hot-toast";
+import AuthLayout from "../../components/authlayout"
+import Input from "../ui/Input";
+import PasswordInput from "../ui/PassowrdInput";
+import Checkbox from "../ui/Checkbox";
+import Button from "../../components/buttons"
+import { loginUserService } from "../../services/authServices";
 
 const LoginForm = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  })
+  const { user, loading, login } = useContext(AuthContext); // Assume login updates user state
+  const navigate = useNavigate();
 
-  const [errors, setErrors] = useState({})
-  const [rememberMe, setRememberMe] = useState(false)
+  // TanStack Query mutation for login
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["login"],
+    mutationFn: loginUserService, 
+    onSuccess: (res) => {
+      const { token, message, data } = res;
+      login(data, token); 
+      toast.success(message || "Login successful");
+      navigate("/dashboard"); 
+    },
+    onError: (error) => {
+      const errorMessage = error.response?.data?.message || "Login failed";
+      toast.error(errorMessage);
+      formik.setErrors({ general: errorMessage });
+    },
+  });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData({
-      ...formData,
-      [name]: value,
-    })
-  }
+  // Formik setup with Yup validation
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+      rememberMe: false,
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .email("Invalid email address")
+        .required("Email is required"),
+      password: Yup.string()
+        .min(6, "Password must be at least 6 characters")
+        .required("Password is required"),
+      rememberMe: Yup.boolean(),
+    }),
+    onSubmit: (values) => {
+      mutate(values); // Trigger the mutation with form values
+    },
+  });
 
-  const validateForm = () => {
-    const newErrors = {}
-
-    // Email validation
-    if (!formData.email) {
-      newErrors.email = "Email is required"
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid"
-    }
-
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = "Password is required"
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-
-    if (validateForm()) {
-      // Submit form data
-      console.log("Form submitted:", formData)
-      // Here you would typically make an API call to authenticate the user
-    }
-  }
+  // Redirect if user is already logged in
+  if (loading) return <div>Loading...</div>;
+  if (user) return <div>User already logged in</div>;
 
   return (
-    <AuthLayout image={baby}>
+    <AuthLayout>
       <div className="animate-fadeInUp">
         <div className="flex items-center mb-6">
           <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center mr-2">
             <span className="text-white font-bold text-sm">H</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Sign in</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Sign In</h1>
         </div>
 
-        <p className="text-gray-600 mb-6">Sign up for free to access to all of our products</p>
+        <p className="text-gray-600 mb-6">Sign in to access your account</p>
 
-        <form onSubmit={handleSubmit}>
+        {formik.errors.general && (
+          <div className="text-red-500 text-sm mb-4">{formik.errors.general}</div>
+        )}
+
+        <form onSubmit={formik.handleSubmit}>
           <Input
             label="Email address"
             type="email"
             name="email"
-            value={formData.email}
-            onChange={handleChange}
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             required
-            error={errors.email}
+            error={formik.touched.email && formik.errors.email}
+            placeholder="Enter your email"
           />
 
           <PasswordInput
             label="Password"
             name="password"
-            value={formData.password}
-            onChange={handleChange}
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             required
-            error={errors.password}
+            error={formik.touched.password && formik.errors.password}
+            placeholder="Enter your password"
           />
 
           <div className="flex items-center justify-between mt-4">
             <Checkbox
               id="remember-me"
+              name="rememberMe"
               label="Remember me"
-              checked={rememberMe}
-              onChange={() => setRememberMe(!rememberMe)}
+              checked={formik.values.rememberMe}
+              onChange={formik.handleChange}
             />
 
-            <Link to="/forgot-password" className="text-sm text-green-600 hover:text-green-700">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-green-600 hover:text-green-700"
+            >
               Forgot password?
             </Link>
           </div>
 
-          <Button type="submit" variant="primary" size="large" className="w-full mt-6 bg-green-600 hover:bg-green-700">
-            Sign in
+          <Button
+            type="submit"
+            variant="primary"
+            size="large"
+            className="w-full mt-6 bg-green-600 hover:bg-green-700 text-white"
+            disabled={isPending}
+          >
+            {isPending ? "Signing in..." : "Sign In"}
           </Button>
         </form>
 
         <p className="text-center text-gray-600 mt-6">
-          Already have an account?{" "}
-          <Link to="/signup" className="text-green-600 hover:text-green-700 font-medium">
+          Don’t have an account?{" "}
+          <Link
+            to="/signup"
+            className="text-green-600 hover:text-green-700 font-medium"
+          >
             Sign up
           </Link>
         </p>
       </div>
     </AuthLayout>
-  )
-}
+  );
+};
 
-export default LoginForm
+export default LoginForm;
