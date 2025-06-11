@@ -1,40 +1,21 @@
 "use client";
-
-import { useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {toast} from "react-hot-toast";
 import AuthLayout from "../../components/authlayout"
 import Input from "../ui/Input";
 import PasswordInput from "../ui/PassowrdInput";
 import Checkbox from "../ui/Checkbox";
 import Button from "../../components/buttons"
-import { loginUserService } from "../../services/authServices";
+import { useLoginUserTan } from "../../hooks/useLoginUserTan";
+import baby from "../../assets/images/baby.png";
+
 
 const LoginForm = () => {
-  const { user, loading, login } = useContext(AuthContext); // Assume login updates user state
   const navigate = useNavigate();
+  const { mutate, isPending } = useLoginUserTan();
 
-  // TanStack Query mutation for login
-  const { mutate, isPending } = useMutation({
-    mutationKey: ["login"],
-    mutationFn: loginUserService, 
-    onSuccess: (res) => {
-      const { token, message, data } = res;
-      login(data, token); 
-      toast.success(message || "Login successful");
-      navigate("/dashboard"); 
-    },
-    onError: (error) => {
-      const errorMessage = error.response?.data?.message || "Login failed";
-      toast.error(errorMessage);
-      formik.setErrors({ general: errorMessage });
-    },
-  });
 
-  // Formik setup with Yup validation
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -51,13 +32,28 @@ const LoginForm = () => {
       rememberMe: Yup.boolean(),
     }),
     onSubmit: (values) => {
-      mutate(values); // Trigger the mutation with form values
+      mutate(values, {
+        onSuccess: (res) => {
+          const { token } = res;
+          if (values.rememberMe) {
+            localStorage.setItem("token", token);
+          } else {
+            sessionStorage.setItem("token", token);
+          }
+          navigate("/dashboard");
+        },
+        onError: (error) => {
+          const errorMessage =
+            error.response?.data?.message || error.message || "Login failed";
+          if (errorMessage.includes("invalid credentials")) {
+            formik.setErrors({ general: "Invalid email or password" });
+          } else {
+            formik.setErrors({ general: errorMessage });
+          }
+        },
+      });
     },
   });
-
-  // Redirect if user is already logged in
-  if (loading) return <div>Loading...</div>;
-  if (user) return <div>User already logged in</div>;
 
   return (
     <AuthLayout>
