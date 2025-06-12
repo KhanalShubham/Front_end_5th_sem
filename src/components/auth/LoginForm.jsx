@@ -8,7 +8,6 @@ import PasswordInput from "../ui/PassowrdInput";
 import Checkbox from "../ui/Checkbox";
 import Button from "../../components/buttons"
 import { useLoginUserTan } from "../../hooks/useLoginUserTan";
-import baby from "../../assets/images/baby.png";
 
 
 const LoginForm = () => {

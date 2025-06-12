@@ -1,4 +1,7 @@
-const AuthLayout = ({ children, image }) => {
+import React from 'react'
+import image from "../assets/images/baby.png"
+
+const AuthLayout = ({ children}) => {
   return (
     <div className="min-h-screen flex">
       {/* Left side - Form */}
@@ -10,7 +13,8 @@ const AuthLayout = ({ children, image }) => {
       <div className="hidden lg:flex lg:w-1/2 bg-green-500 items-center justify-center p-8">
         <img
           src={image}
-          alt="Hope Connect"
+          alt= "Hope Connect"
+          loading="lazy"
           className="object-cover max-w-xs rounded-lg shadow-lg"
         />
       </div>
