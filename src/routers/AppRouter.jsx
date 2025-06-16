@@ -25,6 +25,8 @@ const AppRouter = () => (
       <Route path="admin/dashboard" element={<AdminDashboard/>}></Route>
       <Route path="/admin/patients" element={<PatientManagement />} />
       <Route path="/admin/donors" element={<DonorManagement />} />
+      <Route path="/admin/terms" element={<TermsConditions />} />
+      <Route path="/admin/settings" element={<AdminSettings />} />
     </Routes>
   </BrowserRouter>
 )
