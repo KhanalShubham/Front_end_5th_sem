@@ -7,6 +7,7 @@ import DonationsPage from "../pages/dashboard/DonationPage"
 import DonationDetailPage from "../pages/dashboard/DonationDetailPage"
 import SettingsPage from "../pages/dashboard/SettingsPage"
 import ProfilePage from "../pages/dashboard/ProfilePage"
+import AdminDashboard from "../pages/admin/AdminDashboard"
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -19,6 +20,7 @@ const AppRouter = () => (
       <Route path="/dashboard/donations/:id" element={<DonationDetailPage />} />
       <Route path="/dashboard/settings" element={<SettingsPage />} />
       <Route path="/dashboard/profile" element={<ProfilePage />} />
+      <Route path="admin/dashboard" element={<AdminDashboard/>}></Route>
     </Routes>
   </BrowserRouter>
 )
