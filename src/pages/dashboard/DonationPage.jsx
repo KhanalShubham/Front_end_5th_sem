@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Search, Filter, ChevronDown } from "lucide-react"
-import DashboardLayout from "../../layouts/DashboardLayout"
+import DashboardLayout from "../../layouts/Dashboard-layout"
 import DonationCard from "../../components/ui/DonationCard"
 import Tabs from "../../components/ui/Tabs"
 

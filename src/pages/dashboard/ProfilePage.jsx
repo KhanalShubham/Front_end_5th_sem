@@ -1,8 +1,8 @@
 "use client"
 
 import { Heart, Calendar, MapPin, Mail, Phone, Clock, Award } from "lucide-react"
-import DashboardLayout from "../../layouts/DashboardLayout"
-import Button from "../../components/Button"
+import DashboardLayout from "../../layouts/Dashboard-layout"
+import Button from "../../components/buttons"
 import Tabs from "../../components/ui/Tabs"
 
 const ProfilePage = () => {

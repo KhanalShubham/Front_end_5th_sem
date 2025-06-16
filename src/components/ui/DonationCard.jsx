@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
-import ProgressBar from "./ProgressBar"
-import Badge from "./Badge"
+import ProgressBar from "../progress-bar"
+import Badge from "../badge"
 
 const DonationCard = ({
   id,

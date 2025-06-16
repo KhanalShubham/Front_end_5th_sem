@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Heart, Users, DollarSign, TrendingUp, ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
-import DashboardLayout from "../../layouts/DashboardLayout"
+import DashboardLayout from "../../layouts/Dashboard-layout"
 import StatCard from "../../components/ui/StatCard"
 import DiseaseCard from "../../components/ui/DiseaseCard"
 import CampaignCard from "../../components/ui/CampaignCard"

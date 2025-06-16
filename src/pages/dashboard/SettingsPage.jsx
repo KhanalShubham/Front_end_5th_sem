@@ -2,11 +2,11 @@
 
 import { useState } from "react"
 import { Save, User, Bell, CreditCard, Shield, Wallet } from "lucide-react"
-import DashboardLayout from "../../layouts/DashboardLayout"
+import DashboardLayout from "../../layouts/Dashboard-layout"
 import Input from "../../components/ui/Input"
-import PasswordInput from "../../components/ui/PasswordInput"
+import PasswordInput from "../../components/ui/PassowrdInput"
 import Checkbox from "../../components/ui/Checkbox"
-import Button from "../../components/Button"
+import Button from "../../components/buttons"
 
 const SettingsPage = () => {
   // Profile settings

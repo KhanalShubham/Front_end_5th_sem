@@ -1,5 +1,7 @@
-import { Link } from "react-router-dom"
-import ProgressBar from "./ProgressBar"
+import { Link } from "lucide-react"
+import ProgressBar from "../progress-bar"
+import React from "react"
+
 
 const CampaignCard = ({ id, title, description, image, raised, goal, daysLeft, progress, className = "" }) => {
   return (

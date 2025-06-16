@@ -15,9 +15,9 @@ import {
   DollarSign,
   ChevronLeft,
 } from "lucide-react"
-import DashboardLayout from "../../layouts/DashboardLayout"
-import ProgressBar from "../../components/ui/ProgressBar"
-import Button from "../../components/Button"
+import DashboardLayout from "../../layouts/Dashboard-layout"
+import ProgressBar from "../../components/progress-bar"
+import Button from "../../components/buttons"
 import Tabs from "../../components/ui/Tabs"
 
 const DonationDetailPage = () => {
