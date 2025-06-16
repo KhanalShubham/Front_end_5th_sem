@@ -8,6 +8,8 @@ import DonationDetailPage from "../pages/dashboard/DonationDetailPage"
 import SettingsPage from "../pages/dashboard/SettingsPage"
 import ProfilePage from "../pages/dashboard/ProfilePage"
 import AdminDashboard from "../pages/admin/AdminDashboard"
+import DonorManagement from "../pages/admin/DonorManagement"
+import PatientManagement from "../pages/admin/PatientManagement"
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -21,6 +23,8 @@ const AppRouter = () => (
       <Route path="/dashboard/settings" element={<SettingsPage />} />
       <Route path="/dashboard/profile" element={<ProfilePage />} />
       <Route path="admin/dashboard" element={<AdminDashboard/>}></Route>
+      <Route path="/admin/patients" element={<PatientManagement />} />
+      <Route path="/admin/donors" element={<DonorManagement />} />
     </Routes>
   </BrowserRouter>
 )
