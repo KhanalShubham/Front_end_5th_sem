@@ -24,7 +24,7 @@ const AdminLayout = ({ children }) => {
     { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
     { name: "Patient Requests", href: "/admin/patients", icon: UserCheck },
     { name: "Donors", href: "/admin/donors", icon: Users },
-    { name: "Reports", href: "/admin/reports", icon: FileText },
+    { name: "Terms & Conditions", href: "/admin/terms", icon: FileText },
     { name: "Settings", href: "/admin/settings", icon: Settings },
   ]
 
