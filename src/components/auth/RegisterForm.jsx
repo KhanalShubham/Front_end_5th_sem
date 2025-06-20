@@ -2,7 +2,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import AuthLayout from "../authlayout";
+import AuthLayout from "../AuthLayout";
 import Input from "../ui/Input";
 import PasswordInput from "../ui/PassowrdInput";
 import Checkbox from "../ui/Checkbox";

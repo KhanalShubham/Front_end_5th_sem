@@ -2,12 +2,14 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
+import { adminLogin } from "../../api/admin/authApi";
 import Input from "../ui/Input";
 import PasswordInput from "../ui/PassowrdInput";
 import Checkbox from "../ui/Checkbox";
-import Button from "../../components/buttons"
+import Button from "../../components/buttons";
 import { useLoginUserTan } from "../../hooks/useLoginUserTan";
-import AuthLayout from "../authlayout";
+import { toast } from "react-hot-toast";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -20,30 +22,55 @@ const LoginForm = () => {
       rememberMe: false,
     },
     validationSchema: Yup.object({
-      email: Yup.string()
-        .email("Invalid email address")
-        .required("Email is required"),
-      password: Yup.string()
-        .min(6, "Password must be at least 6 characters")
-        .required("Password is required"),
-      rememberMe: Yup.boolean(),
+      email: Yup.string().email("Invalid email address").required("Email is required"),
+      password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
     }),
-    onSubmit: (values) => {
-      // Regular donor login
+    onSubmit: async (values) => {
+      try {
+        // Attempt admin login silently via API module
+        const adminRes = await adminLogin({
+          username: values.email,
+          password: values.password,
+        });
+
+        if (adminRes.data.success) {
+          toast.success(adminRes.data.message || "Admin login successful");
+
+          const { token } = adminRes.data;
+          const storage = values.rememberMe ? localStorage : sessionStorage;
+
+          storage.setItem("token", token);
+          storage.setItem("user", JSON.stringify({ role: "admin" }));
+
+          return navigate("/admin/dashboard");
+        }
+      } catch (adminError) {
+        // If admin login fails, fall through to donor login
+      }
+
+      // Now proceed with donor login mutation
       mutate(values, {
         onSuccess: (res) => {
-          const { token } = res;
-          if (values.rememberMe) {
-            localStorage.setItem("token", token);
+          toast.success(res.message || "Login successful");
+
+          const { token, data } = res;
+          const storage = values.rememberMe ? localStorage : sessionStorage;
+
+          storage.setItem("token", token);
+          storage.setItem("user", JSON.stringify(data));
+
+          if (data?.role === "admin") {
+            navigate("/admin");
           } else {
-            sessionStorage.setItem("token", token);
+            navigate("/dashboard");
           }
-          navigate("/dashboard");
         },
         onError: (error) => {
           const errorMessage =
             error.response?.data?.message || error.message || "Login failed";
-          if (errorMessage.includes("invalid credentials")) {
+          toast.error(errorMessage);
+
+          if (errorMessage.toLowerCase().includes("invalid")) {
             formik.setErrors({ general: "Invalid email or password" });
           } else {
             formik.setErrors({ general: errorMessage });
@@ -54,7 +81,6 @@ const LoginForm = () => {
   });
 
   return (
-    <>
     <div className="animate-fadeInUp">
       <div className="flex items-center mb-6">
         <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center mr-2">
@@ -82,7 +108,7 @@ const LoginForm = () => {
           required
           error={formik.touched.email && formik.errors.email}
           placeholder="Enter your email"
-          />
+        />
 
         <PasswordInput
           label="Password"
@@ -93,7 +119,7 @@ const LoginForm = () => {
           required
           error={formik.touched.password && formik.errors.password}
           placeholder="Enter your password"
-          />
+        />
 
         <div className="flex items-center justify-between mt-4">
           <Checkbox
@@ -102,12 +128,8 @@ const LoginForm = () => {
             label="Remember me"
             checked={formik.values.rememberMe}
             onChange={formik.handleChange}
-            />
-
-          <Link
-            to="/forgot-password"
-            className="text-sm text-green-600 hover:text-green-700"
-            >
+          />
+          <Link to="/forgot-password" className="text-sm text-green-600 hover:text-green-700">
             Forgot password?
           </Link>
         </div>
@@ -118,23 +140,18 @@ const LoginForm = () => {
           size="large"
           className="w-full mt-6 bg-green-600 hover:bg-green-700 text-white"
           disabled={isPending}
-          >
+        >
           {isPending ? "Signing in..." : "Sign In"}
         </Button>
       </form>
 
       <p className="text-center text-gray-600 mt-6">
         Don't have an account?{" "}
-        <Link
-          to="/signup"
-          className="text-green-600 hover:text-green-700 font-medium"
-          >
+        <Link to="/signup" className="text-green-600 hover:text-green-700 font-medium">
           Sign up
         </Link>
       </p>
     </div>
-    </>
-    
   );
 };
 

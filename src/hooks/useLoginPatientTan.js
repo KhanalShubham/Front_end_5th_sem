@@ -1,12 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
-import { loginUserService } from "../services/authUserServices";
+import { loginPatientApi } from "../api/authPatientApi";
 
-
-export const useLoginUserTan = () => {
+export const useLoginPatientTan = () => {
   return useMutation({
-    mutationKey: ["user_login"],
-    mutationFn: loginUserService,
+    mutationKey: ["patient_login"],
+    mutationFn: loginPatientApi,
     onSuccess: (res) => {
       toast.success(res.message || "Login successful");
     },

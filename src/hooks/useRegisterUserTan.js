@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
-import { registerUserService } from "../services/authServices";
+import { registerUserService } from "../services/authUserServices";
 
 export const useRegisterUserTan = () => {
   return useMutation({
-    mutationKey: ["register"],
+    mutationKey: ["user_register"],
     mutationFn: registerUserService,
     onSuccess: (res) => {
       toast.success(res.message || "Registration successful");

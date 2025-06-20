@@ -7,12 +7,11 @@ import DonationsPage from "../pages/dashboard/DonationPage"
 import DonationDetailPage from "../pages/dashboard/DonationDetailPage"
 import SettingsPage from "../pages/dashboard/SettingsPage"
 import ProfilePage from "../pages/dashboard/ProfilePage"
-import AdminDashboard from "../pages/admin/AdminDashboard"
+import AdminDashboard from "../pages/admin/AdminDashboardManagement"
 import DonorManagement from "../pages/admin/DonorManagement"
 import PatientManagement from "../pages/admin/PatientManagement"
-import TermsConditions from "../pages/admin/TermsAndConsitions"
-import AdminSettings from "../pages/admin/AdminSettings"
-import AdminLoginPage from "../pages/AdminLogin"
+import AdminMainLayout from "../layouts/admin/adminMainLayout"
+import AdminDashboardManagement from "../components/admin/AdminDashboard"
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -29,12 +28,12 @@ const AppRouter = () => (
       <Route path="/dashboard/profile" element={<ProfilePage />} />
 
       {/* Admin Routes */}
-      <Route path="/admin/login" element={<AdminLoginPage />} />
-      <Route path="/admin/dashboard" element={<AdminDashboard />} />
-      <Route path="/admin/patients" element={<PatientManagement />} />
-      <Route path="/admin/donors" element={<DonorManagement />} />
-      <Route path="/admin/terms" element={<TermsConditions />} />
-      <Route path="/admin/settings" element={<AdminSettings />} />
+      <Route path="/admin/*" element={<AdminMainLayout/>}>
+        <Route index element={<AdminDashboardManagement />} />
+        <Route path="donor" element={<DonorManagement/>}/>
+        <Route path="patient" element={<PatientManagement/>}/>
+      </Route>
+
     </Routes>
   </BrowserRouter>
 )
