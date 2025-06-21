@@ -1,4 +1,7 @@
+  import baby from "../assets/images/baby.png"
+
 const AuthLayout = ({ children, colorBackground }) => {
+
   return (
     <div className="min-h-screen flex">
       {/* Left side - Form */}
@@ -9,7 +12,7 @@ const AuthLayout = ({ children, colorBackground }) => {
       {/* Right side - Image */}
       <div className="hidden lg:flex lg:w-1/2 bg-green-500 items-center justify-center p-8">
         <img
-          src="/placeholder.svg?height=400&width=300"
+          src={baby}
           alt="Hope Connect"
           loading="lazy"
           className="object-cover max-w-xs rounded-lg shadow-lg"

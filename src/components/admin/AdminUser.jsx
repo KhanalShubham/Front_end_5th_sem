@@ -1,51 +1,52 @@
 import React, { useState } from "react";
-import { useAdminPatient } from "../../hooks/admin/useAdminPatient";
-import AddPatientModal from "./modal/AdminPatientModal";
-import EditPatientModal from "./modal/EditPatientModal";
-import DeletePatientModal from "./modal/DeletePatientModal";
+import { useAdminUser } from "../../hooks/admin/useAdminUser";
+import AddUserModal from "./modal/AdminUserModal";
+import EditUserModal from "./modal/EditUserModal";
+import DeleteUserModal from "./modal/DeleteUserModal";
 import { Toaster } from "react-hot-toast";
-import { Users, Plus, Edit3, Trash2, Phone, FileText, Activity, ChevronLeft, ChevronRight, User } from "lucide-react"
+import { Heart, Plus, Edit3, Trash2, Mail, User, Users, Gift, ChevronLeft, ChevronRight, UserCheck } from "lucide-react"
 
-export default function AdminPatient() {
+export default function AdminUser() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedPatientId, setSelectedPatientId] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   const {
-    patients,
+    users,
     isLoading,
     isError,
     pagination,
     setPageNumber,
     canNextPage,
     canPreviousPage,
-  } = useAdminPatient();
+  } = useAdminUser();
 
-if (isLoading) {
+ if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center h-64">
             <div className="flex flex-col items-center space-y-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-              <p className="text-gray-600 font-medium">Loading patients...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+              <p className="text-gray-600 font-medium">Loading donors...</p>
             </div>
           </div>
         </div>
       </div>
     )
   }
-if (isError) {
+
+  if (isError) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <div className="text-red-500 mb-4">
-                <Activity className="h-16 w-16 mx-auto" />
+                <Heart className="h-16 w-16 mx-auto" />
               </div>
-              <p className="text-red-600 font-medium text-lg">Error fetching patients...</p>
+              <p className="text-red-600 font-medium text-lg">Error fetching donors...</p>
             </div>
           </div>
         </div>
@@ -53,14 +54,13 @@ if (isError) {
     )
   }
 
-  // Handlers
   const openEditModal = (id) => {
-    setSelectedPatientId(id);
+    setSelectedUserId(id);
     setShowEditModal(true);
   };
 
   const openDeleteModal = (id) => {
-    setSelectedPatientId(id);
+    setSelectedUserId(id);
     setShowDeleteModal(true);
   };
 
@@ -68,12 +68,11 @@ if (isError) {
     setShowAddModal(false);
     setShowEditModal(false);
     setShowDeleteModal(false);
-    setSelectedPatientId(null);
+    setSelectedUserId(null);
   };
 
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100">
       <Toaster />
 
       <div className="max-w-7xl mx-auto p-6">
@@ -81,28 +80,28 @@ if (isError) {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="bg-blue-600 p-3 rounded-xl shadow-lg">
-                <Users className="h-8 w-8 text-white" />
+              <div className="bg-green-600 p-3 rounded-xl shadow-lg">
+                <Heart className="h-8 w-8 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Patient Management</h1>
-                <p className="text-gray-600 mt-1">Manage and monitor patient records</p>
+                <h1 className="text-3xl font-bold text-gray-900">Donor Management</h1>
+                <p className="text-gray-600 mt-1">Manage and support our generous donors</p>
               </div>
             </div>
             <button
               onClick={() => setShowAddModal(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl flex items-center"
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl flex items-center"
             >
               <Plus className="h-5 w-5 mr-2" />
-              Add New Patient
+              Add New Donor
             </button>
           </div>
         </div>
 
         {/* Modals */}
-        <AddPatientModal isOpen={showAddModal} onClose={closeAllModals} />
-        <EditPatientModal isOpen={showEditModal} onClose={closeAllModals} patientId={selectedPatientId} />
-        <DeletePatientModal isOpen={showDeleteModal} onClose={closeAllModals} patientId={selectedPatientId} />
+        <AddUserModal isOpen={showAddModal} onClose={closeAllModals} />
+        <EditUserModal isOpen={showEditModal} onClose={closeAllModals} userId={selectedUserId} />
+        <DeleteUserModal isOpen={showDeleteModal} onClose={closeAllModals} userId={selectedUserId} />
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -110,11 +109,11 @@ if (isError) {
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Patients</p>
-                  <p className="text-3xl font-bold text-gray-900">{pagination.totalCount || patients.length}</p>
+                  <p className="text-sm font-medium text-gray-600">Total Donors</p>
+                  <p className="text-3xl font-bold text-gray-900">{pagination.totalCount || users.length}</p>
                 </div>
-                <div className="bg-blue-100 p-3 rounded-full">
-                  <Users className="h-6 w-6 text-blue-600" />
+                <div className="bg-green-100 p-3 rounded-full">
+                  <Heart className="h-6 w-6 text-green-600" />
                 </div>
               </div>
             </div>
@@ -127,8 +126,8 @@ if (isError) {
                   <p className="text-sm font-medium text-gray-600">Current Page</p>
                   <p className="text-3xl font-bold text-gray-900">{pagination.page}</p>
                 </div>
-                <div className="bg-green-100 p-3 rounded-full">
-                  <FileText className="h-6 w-6 text-green-600" />
+                <div className="bg-teal-100 p-3 rounded-full">
+                  <Gift className="h-6 w-6 text-teal-600" />
                 </div>
               </div>
             </div>
@@ -141,33 +140,36 @@ if (isError) {
                   <p className="text-sm font-medium text-gray-600">Total Pages</p>
                   <p className="text-3xl font-bold text-gray-900">{pagination.totalPages}</p>
                 </div>
-                <div className="bg-purple-100 p-3 rounded-full">
-                  <Activity className="h-6 w-6 text-purple-600" />
+                <div className="bg-emerald-100 p-3 rounded-full">
+                  <Users className="h-6 w-6 text-emerald-600" />
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Patient Cards Grid */}
+        {/* Donor Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {patients.map((patient) => (
+          {users.map((user) => (
             <div
-              key={patient._id}
+              key={user._id}
               className="bg-white shadow-lg border-0 hover:shadow-xl transition-all duration-200 hover:-translate-y-1 rounded-lg"
             >
               <div className="pb-3 p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-full">
-                      <User className="h-5 w-5 text-white" />
+                    <div className="bg-gradient-to-r from-green-500 to-teal-600 p-2 rounded-full">
+                      <UserCheck className="h-5 w-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-lg text-gray-900">{patient.name}</h3>
-                      <span className="mt-1 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                        Patient ID: {patient._id.slice(-6)}
+                      <h3 className="font-semibold text-lg text-gray-900">{user.username}</h3>
+                      <span className="mt-1 bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                        Donor ID: {user._id.slice(-6)}
                       </span>
                     </div>
+                  </div>
+                  <div className="text-green-500">
+                    <Heart className="h-5 w-5 fill-current" />
                   </div>
                 </div>
               </div>
@@ -175,44 +177,44 @@ if (isError) {
               <div className="space-y-4 px-6 pb-6">
                 <div className="space-y-3">
                   <div className="flex items-start space-x-3">
-                    <Activity className="h-4 w-4 text-red-500 mt-1 flex-shrink-0" />
+                    <User className="h-4 w-4 text-gray-500 mt-1 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-medium text-gray-700">Disease</p>
-                      <p className="text-sm text-gray-600">{patient.disease}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-3">
-                    <FileText className="h-4 w-4 text-gray-500 mt-1 flex-shrink-0" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-700">Description</p>
-                      <p className="text-sm text-gray-600 line-clamp-2">{patient.description}</p>
+                      <p className="text-sm font-medium text-gray-700">Username</p>
+                      <p className="text-sm text-gray-600">{user.username}</p>
                     </div>
                   </div>
 
                   <div className="flex items-center space-x-3">
-                    <Phone className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <Mail className="h-4 w-4 text-blue-500 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-medium text-gray-700">Contact</p>
-                      <p className="text-sm text-gray-600">{patient.contact}</p>
+                      <p className="text-sm font-medium text-gray-700">Email</p>
+                      <p className="text-sm text-gray-600 break-all">{user.email}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3">
+                    <Gift className="h-4 w-4 text-purple-500 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Status</p>
+                      <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Active Donor</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex space-x-2 pt-4 border-t border-gray-100">
                   <button
-                    onClick={() => openEditModal(patient._id)}
-                    className="flex-1 bg-yellow-50 border border-yellow-200 text-yellow-700 hover:bg-yellow-100 hover:border-yellow-300 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center"
+                    onClick={() => openEditModal(user._id)}
+                    className="flex-1 bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 hover:border-amber-300 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center"
                   >
                     <Edit3 className="h-4 w-4 mr-2" />
                     Edit
                   </button>
                   <button
-                    onClick={() => openDeleteModal(patient._id)}
+                    onClick={() => openDeleteModal(user._id)}
                     className="flex-1 bg-red-50 border border-red-200 text-red-700 hover:bg-red-100 hover:border-red-300 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
+                    Remove
                   </button>
                 </div>
               </div>
@@ -221,27 +223,27 @@ if (isError) {
         </div>
 
         {/* Empty State */}
-        {patients.length === 0 && (
+        {users.length === 0 && (
           <div className="bg-white shadow-lg border-0 rounded-lg">
             <div className="p-12 text-center">
               <div className="text-gray-400 mb-4">
-                <Users className="h-16 w-16 mx-auto" />
+                <Heart className="h-16 w-16 mx-auto" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No patients found</h3>
-              <p className="text-gray-600 mb-6">Get started by adding your first patient record.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No donors found</h3>
+              <p className="text-gray-600 mb-6">Start building your donor community by adding the first donor.</p>
               <button
                 onClick={() => setShowAddModal(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center mx-auto"
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md flex items-center mx-auto"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Add First Patient
+                Add First Donor
               </button>
             </div>
           </div>
         )}
 
         {/* Pagination Controls */}
-        {patients.length > 0 && (
+        {users.length > 0 && (
           <div className="bg-white shadow-lg border-0 rounded-lg">
             <div className="p-6">
               <div className="flex items-center justify-between">

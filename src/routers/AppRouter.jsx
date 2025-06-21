@@ -7,8 +7,7 @@ import DonationsPage from "../pages/dashboard/DonationPage"
 import DonationDetailPage from "../pages/dashboard/DonationDetailPage"
 import SettingsPage from "../pages/dashboard/SettingsPage"
 import ProfilePage from "../pages/dashboard/ProfilePage"
-import AdminDashboard from "../pages/admin/AdminDashboardManagement"
-import DonorManagement from "../pages/admin/DonorManagement"
+import UserManagement from "../pages/admin/UserManagement"
 import PatientManagement from "../pages/admin/PatientManagement"
 import AdminMainLayout from "../layouts/admin/adminMainLayout"
 import AdminDashboardManagement from "../components/admin/AdminDashboard"
@@ -30,7 +29,7 @@ const AppRouter = () => (
       {/* Admin Routes */}
       <Route path="/admin/*" element={<AdminMainLayout/>}>
         <Route index element={<AdminDashboardManagement />} />
-        <Route path="donor" element={<DonorManagement/>}/>
+        <Route path="donor" element={<UserManagement/>}/>
         <Route path="patient" element={<PatientManagement/>}/>
       </Route>
 

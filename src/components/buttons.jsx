@@ -1,4 +1,4 @@
-const Button = ({
+const Buttons = ({
   children,
   variant = "primary",
   size = "medium",
@@ -35,4 +35,4 @@ const Button = ({
   )
 }
 
-export default Button
+export default Buttons
