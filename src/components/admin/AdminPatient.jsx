@@ -240,6 +240,7 @@ if (isError) {
             </div>
           ))}
         </div>
+        
 
         {/* Empty State */}
         {patients.length === 0 && (
