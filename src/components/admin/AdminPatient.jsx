@@ -4,13 +4,16 @@ import AddPatientModal from "./modal/AdminPatientModal";
 import EditPatientModal from "./modal/EditPatientModal";
 import DeletePatientModal from "./modal/DeletePatientModal";
 import { Toaster } from "react-hot-toast";
-import { Users, Plus, Edit3, Trash2, Phone, FileText, Activity, ChevronLeft, ChevronRight, User } from "lucide-react"
+import { Users, Plus, Edit3, Trash2, Phone, FileText, Activity, ChevronLeft, ChevronRight, User, Search } from "lucide-react"
+
 
 export default function AdminPatient() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
 
   const {
     patients,
@@ -70,6 +73,9 @@ if (isError) {
     setShowDeleteModal(false);
     setSelectedPatientId(null);
   };
+  const filteredPatients = patients.filter((patient) =>
+    patient.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
 
   return (
@@ -103,6 +109,20 @@ if (isError) {
         <AddPatientModal isOpen={showAddModal} onClose={closeAllModals} />
         <EditPatientModal isOpen={showEditModal} onClose={closeAllModals} patientId={selectedPatientId} />
         <DeletePatientModal isOpen={showDeleteModal} onClose={closeAllModals} patientId={selectedPatientId} />
+        {/* Search Bar */}
+        <div className="mb-6 flex justify-end">
+          <div className="relative w-full max-w-xs">
+            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search patients..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
+        </div>
+
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -119,6 +139,7 @@ if (isError) {
               </div>
             </div>
           </div>
+          
 
           <div className="bg-white shadow-lg border-0 hover:shadow-xl transition-shadow duration-200 rounded-lg">
             <div className="p-6">
@@ -151,7 +172,7 @@ if (isError) {
 
         {/* Patient Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {patients.map((patient) => (
+          {filteredPatients.map((patient) => (
             <div
               key={patient._id}
               className="bg-white shadow-lg border-0 hover:shadow-xl transition-all duration-200 hover:-translate-y-1 rounded-lg"

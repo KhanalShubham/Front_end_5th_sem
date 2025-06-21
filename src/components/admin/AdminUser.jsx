@@ -4,13 +4,14 @@ import AddUserModal from "./modal/AdminUserModal";
 import EditUserModal from "./modal/EditUserModal";
 import DeleteUserModal from "./modal/DeleteUserModal";
 import { Toaster } from "react-hot-toast";
-import { Heart, Plus, Edit3, Trash2, Mail, User, Users, Gift, ChevronLeft, ChevronRight, UserCheck } from "lucide-react"
+import { Heart, Plus, Edit3, Trash2, Mail, User, Users, Gift, ChevronLeft, ChevronRight, UserCheck, Search } from "lucide-react"
 
 export default function AdminUser() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const {
     users,
@@ -70,6 +71,10 @@ export default function AdminUser() {
     setShowDeleteModal(false);
     setSelectedUserId(null);
   };
+    const filteredUsers = users.filter((users) =>
+    users.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100">
@@ -102,6 +107,19 @@ export default function AdminUser() {
         <AddUserModal isOpen={showAddModal} onClose={closeAllModals} />
         <EditUserModal isOpen={showEditModal} onClose={closeAllModals} userId={selectedUserId} />
         <DeleteUserModal isOpen={showDeleteModal} onClose={closeAllModals} userId={selectedUserId} />
+        {/* Search Bar */}
+        <div className="mb-6 flex justify-end">
+          <div className="relative w-full max-w-xs">
+            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search Donors..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
+        </div>
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -150,7 +168,7 @@ export default function AdminUser() {
 
         {/* Donor Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {users.map((user) => (
+          {filteredUsers.map((user) => (
             <div
               key={user._id}
               className="bg-white shadow-lg border-0 hover:shadow-xl transition-all duration-200 hover:-translate-y-1 rounded-lg"
