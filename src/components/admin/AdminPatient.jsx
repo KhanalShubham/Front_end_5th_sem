@@ -1,11 +1,25 @@
-import React, { useState } from "react";
+"use client";
+import { useState } from "react";
 import { useAdminPatient } from "../../hooks/admin/useAdminPatient";
 import AddPatientModal from "./modal/AdminPatientModal";
 import EditPatientModal from "./modal/EditPatientModal";
 import DeletePatientModal from "./modal/DeletePatientModal";
+import { getBackendImageUrl } from "../../utils/backend-image";
 import { Toaster } from "react-hot-toast";
-import { Users, Plus, Edit3, Trash2, Phone, FileText, Activity, ChevronLeft, ChevronRight, User, Search } from "lucide-react"
-
+import {
+  Users,
+  Plus,
+  Edit3,
+  Trash2,
+  Phone,
+  FileText,
+  Activity,
+  ChevronLeft,
+  ChevronRight,
+  User,
+  Search,
+  ImageIcon,
+} from "lucide-react";
 
 export default function AdminPatient() {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -14,18 +28,11 @@ export default function AdminPatient() {
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const { patients, isLoading, isError, pagination, setPageNumber, canNextPage, canPreviousPage } = useAdminPatient();
 
-  const {
-    patients,
-    isLoading,
-    isError,
-    pagination,
-    setPageNumber,
-    canNextPage,
-    canPreviousPage,
-  } = useAdminPatient();
+  console.log("Patients:", patients);
 
-if (isLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
         <div className="max-w-7xl mx-auto">
@@ -37,9 +44,10 @@ if (isLoading) {
           </div>
         </div>
       </div>
-    )
+    );
   }
-if (isError) {
+
+  if (isError) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
         <div className="max-w-7xl mx-auto">
@@ -53,10 +61,9 @@ if (isError) {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
-  // Handlers
   const openEditModal = (id) => {
     setSelectedPatientId(id);
     setShowEditModal(true);
@@ -73,17 +80,13 @@ if (isError) {
     setShowDeleteModal(false);
     setSelectedPatientId(null);
   };
-  const filteredPatients = patients.filter((patient) =>
-    patient.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
+  const filteredPatients = patients.filter((patient) => patient.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <Toaster />
-
       <div className="max-w-7xl mx-auto p-6">
-        {/* Header Section */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -105,11 +108,10 @@ if (isError) {
           </div>
         </div>
 
-        {/* Modals */}
         <AddPatientModal isOpen={showAddModal} onClose={closeAllModals} />
         <EditPatientModal isOpen={showEditModal} onClose={closeAllModals} patientId={selectedPatientId} />
         <DeletePatientModal isOpen={showDeleteModal} onClose={closeAllModals} patientId={selectedPatientId} />
-        {/* Search Bar */}
+
         <div className="mb-6 flex justify-end">
           <div className="relative w-full max-w-xs">
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
@@ -123,8 +125,6 @@ if (isError) {
           </div>
         </div>
 
-
-        {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white shadow-lg border-0 hover:shadow-xl transition-shadow duration-200 rounded-lg">
             <div className="p-6">
@@ -139,8 +139,6 @@ if (isError) {
               </div>
             </div>
           </div>
-          
-
           <div className="bg-white shadow-lg border-0 hover:shadow-xl transition-shadow duration-200 rounded-lg">
             <div className="p-6">
               <div className="flex items-center justify-between">
@@ -154,7 +152,6 @@ if (isError) {
               </div>
             </div>
           </div>
-
           <div className="bg-white shadow-lg border-0 hover:shadow-xl transition-shadow duration-200 rounded-lg">
             <div className="p-6">
               <div className="flex items-center justify-between">
@@ -170,30 +167,51 @@ if (isError) {
           </div>
         </div>
 
-        {/* Patient Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {filteredPatients.map((patient) => (
+            
             <div
               key={patient._id}
-              className="bg-white shadow-lg border-0 hover:shadow-xl transition-all duration-200 hover:-translate-y-1 rounded-lg"
+              className="bg-white shadow-lg border-0 hover:shadow-xl transition-all duration-200 hover:-translate-y-1 rounded-lg overflow-hidden"
             >
-              <div className="pb-3 p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-full">
-                      <User className="h-5 w-5 text-white" />
+              
+              <div className="h-32 bg-gradient-to-r from-blue-100 to-indigo-100 relative">
+                {patient.filepath ? (
+                  <>
+                    <img
+                      src={getBackendImageUrl(patient.filepath) || "/placeholder.svg"}
+                      alt={patient.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        console.error("Card image load error:", e.target.src);
+                        e.target.style.display = "none";
+                        e.target.nextSibling.style.display = "flex";
+                      }}
+                    />
+                    <div className="w-full h-full absolute inset-0 items-center justify-center bg-gradient-to-r from-blue-100 to-indigo-100 hidden">
+                      <ImageIcon className="h-12 w-12 text-gray-400" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-lg text-gray-900">{patient.name}</h3>
-                      <span className="mt-1 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                        Patient ID: {patient._id.slice(-6)}
-                      </span>
-                    </div>
+                  </>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <ImageIcon className="h-12 w-12 text-gray-400" />
                   </div>
+                )}
+                <div className="absolute bottom-2 left-2">
+                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                    ID: {patient._id.slice(-6)}
+                  </span>
                 </div>
               </div>
-
-              <div className="space-y-4 px-6 pb-6">
+              <div className="p-6">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-full">
+                    <User className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg text-gray-900">{patient.name}</h3>
+                  </div>
+                </div>
                 <div className="space-y-3">
                   <div className="flex items-start space-x-3">
                     <Activity className="h-4 w-4 text-red-500 mt-1 flex-shrink-0" />
@@ -202,7 +220,6 @@ if (isError) {
                       <p className="text-sm text-gray-600">{patient.disease}</p>
                     </div>
                   </div>
-
                   <div className="flex items-start space-x-3">
                     <FileText className="h-4 w-4 text-gray-500 mt-1 flex-shrink-0" />
                     <div>
@@ -210,7 +227,6 @@ if (isError) {
                       <p className="text-sm text-gray-600 line-clamp-2">{patient.description}</p>
                     </div>
                   </div>
-
                   <div className="flex items-center space-x-3">
                     <Phone className="h-4 w-4 text-green-500 flex-shrink-0" />
                     <div>
@@ -219,8 +235,7 @@ if (isError) {
                     </div>
                   </div>
                 </div>
-
-                <div className="flex space-x-2 pt-4 border-t border-gray-100">
+                <div className="flex space-x-2 pt-4 border-t border-gray-100 mt-4">
                   <button
                     onClick={() => openEditModal(patient._id)}
                     className="flex-1 bg-yellow-50 border border-yellow-200 text-yellow-700 hover:bg-yellow-100 hover:border-yellow-300 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center"
@@ -240,10 +255,8 @@ if (isError) {
             </div>
           ))}
         </div>
-        
 
-        {/* Empty State */}
-        {patients.length === 0 && (
+        {filteredPatients.length === 0 && (
           <div className="bg-white shadow-lg border-0 rounded-lg">
             <div className="p-12 text-center">
               <div className="text-gray-400 mb-4">
@@ -262,7 +275,6 @@ if (isError) {
           </div>
         )}
 
-        {/* Pagination Controls */}
         {patients.length > 0 && (
           <div className="bg-white shadow-lg border-0 rounded-lg">
             <div className="p-6">
@@ -275,13 +287,11 @@ if (isError) {
                   <ChevronLeft className="h-4 w-4" />
                   <span>Previous</span>
                 </button>
-
                 <div className="flex items-center space-x-4">
                   <span className="text-sm text-gray-600 bg-gray-100 px-4 py-2 rounded-full">
                     Page {pagination.page} of {pagination.totalPages}
                   </span>
                 </div>
-
                 <button
                   onClick={() => setPageNumber((prev) => prev + 1)}
                   disabled={!canNextPage}
@@ -296,5 +306,5 @@ if (isError) {
         )}
       </div>
     </div>
-  )
+  );
 }
