@@ -9,6 +9,7 @@ import SettingsPage from "../pages/dashboard/SettingsPage"
 import ProfilePage from "../pages/dashboard/ProfilePage"
 import UserManagement from "../pages/admin/UserManagement"
 import PatientManagement from "../pages/admin/PatientManagement"
+import RequestManagement from "../pages/admin/RequestManagement"
 import AdminMainLayout from "../layouts/admin/adminMainLayout"
 import AdminDashboardManagement from "../components/admin/AdminDashboard"
 
@@ -31,6 +32,7 @@ const AppRouter = () => (
         <Route index element={<AdminDashboardManagement />} />
         <Route path="donor" element={<UserManagement/>}/>
         <Route path="patient" element={<PatientManagement/>}/>
+        <Route path="request" element={<RequestManagement/>}/>
       </Route>
 
     </Routes>

@@ -96,12 +96,6 @@ const Header = () => {
             >
               Services
             </Link>
-            <Link
-              to="/contact"
-              className="block px-3 py-2 text-gray-700 hover:text-gray-900 transition-all duration-300 hover:bg-green-50 rounded-lg"
-            >
-              Contact us
-            </Link>
             <div className="flex flex-col space-y-2 px-3 py-2">
               <Link to="/login">
                 <Button variant="ghost" size="small" className="justify-start">
