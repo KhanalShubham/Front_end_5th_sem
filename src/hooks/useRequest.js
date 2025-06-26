@@ -1,12 +1,12 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import toast from "react-hot-toast"
 import {
   addOneRequestService,
   getMyRequestsService,
   deleteRequestService,
   getAllRequestsService,
   updateRequestStatusService,
-} from "../services/requestService";
+} from "../services/requestService"
 
 // Patient: Fetch my requests
 export const useMyRequests = () => {
@@ -14,42 +14,61 @@ export const useMyRequests = () => {
     queryKey: ["my_requests"],
     queryFn: getMyRequestsService,
     retry: false,
-  });
-  const myRequests = query.data?.data || [];
-  return { ...query, myRequests };
-};
+  })
+  const myRequests = query.data?.data || []
+  return { ...query, myRequests }
+}
 
-// Patient: Add request
+// Patient: Add request - FIXED ERROR HANDLING
 export const useAddRequest = () => {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: addOneRequestService,
-    mutationKey: ["add_request"],
-    onSuccess: () => {
-      toast.success("Request submitted successfully");
-      queryClient.invalidateQueries(["my_requests"]);
+    onSuccess: (data) => {
+      toast.success(data?.message || "Request submitted successfully")
+      queryClient.invalidateQueries({ queryKey: ["my_requests"] })
     },
     onError: (err) => {
-      toast.error(err.message || "Failed to submit request");
+      // BETTER ERROR LOGGING
+      console.error("Add request error details:", {
+        message: err?.message,
+        response: err?.response?.data,
+        status: err?.response?.status,
+        fullError: err,
+      })
+
+      // EXTRACT PROPER ERROR MESSAGE
+      let errorMessage = "Failed to submit request"
+
+      if (err?.response?.data?.message) {
+        errorMessage = err.response.data.message
+      } else if (err?.message) {
+        errorMessage = err.message
+      } else if (typeof err === "string") {
+        errorMessage = err
+      }
+
+      toast.error(errorMessage)
     },
-  });
-};
+  })
+}
 
 // Patient: Delete request
 export const useDeleteRequest = () => {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: deleteRequestService,
-    mutationKey: ["delete_request"],
-    onSuccess: () => {
-      toast.success("Request deleted");
-      queryClient.invalidateQueries(["my_requests"]);
+    onSuccess: (data) => {
+      toast.success(data?.message || "Request deleted successfully")
+      queryClient.invalidateQueries({ queryKey: ["my_requests"] })
     },
     onError: (err) => {
-      toast.error(err.message || "Failed to delete request");
+      console.error("Delete request error:", err)
+      const errorMessage = err?.response?.data?.message || err?.message || "Failed to delete request"
+      toast.error(errorMessage)
     },
-  });
-};
+  })
+}
 
 // Admin: Fetch all requests (with pagination, status, date filter)
 export const useAdminRequests = (params) => {
@@ -58,26 +77,26 @@ export const useAdminRequests = (params) => {
     queryFn: () => getAllRequestsService(params),
     keepPreviousData: true,
     retry: false,
-  });
-  const requests = query.data?.data || [];
-  const pagination = query.data?.pagination || { page: 1, totalPages: 1 };
-  return { ...query, requests, pagination };
-};
+  })
+  const requests = query.data?.data || []
+  const pagination = query.data?.pagination || { page: 1, totalPages: 1 }
+  return { ...query, requests, pagination }
+}
 
 // Admin: Update request status
 export const useUpdateRequestStatus = () => {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: updateRequestStatusService,
-    mutationKey: ["update_request_status"],
     onSuccess: (res) => {
-      toast.success(res.message);
-      queryClient.invalidateQueries(["admin_requests"]);
+      toast.success(res?.message || "Status updated successfully")
+      queryClient.invalidateQueries({ queryKey: ["admin_requests"] })
+      queryClient.invalidateQueries({ queryKey: ["my_requests"] })
     },
     onError: (err) => {
-        console.log(err);
-        
-      toast.error(err.message || "Failed to update status");
+      console.error("Update status error:", err)
+      const errorMessage = err?.response?.data?.message || err?.message || "Failed to update status"
+      toast.error(errorMessage)
     },
-  });
-};
+  })
+}

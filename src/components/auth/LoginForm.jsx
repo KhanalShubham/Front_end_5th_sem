@@ -38,7 +38,7 @@ const LoginForm = () => {
           storage.setItem("token", token);
           storage.setItem("user", JSON.stringify({ role: "admin" }));
 
-          return navigate("/admin/dashboard");
+          return navigate("/admin");
         }
       } catch (adminError) {
         // If admin login fails, fall through to donor login
@@ -58,7 +58,7 @@ const LoginForm = () => {
           if (data?.role === "admin") {
             navigate("/admin");
           } else {
-            navigate("/dashboard");
+            navigate("/user/dashboard");
           }
         },
         onError: (error) => {

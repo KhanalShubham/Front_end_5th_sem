@@ -16,7 +16,7 @@ const handleLogin = async (formData) => {
       // ✅ Store token
       localStorage.setItem("token", adminRes.data.token);
 
-      return navigate("/admin/dashboard");
+      return navigate("/admin/");
     }
   } catch (adminError) {
     console.log("Not an admin, trying donor login...");
@@ -30,7 +30,7 @@ const handleLogin = async (formData) => {
       // ✅ Store token
       localStorage.setItem("token", donorRes.data.token);
 
-      return navigate("/dashboard");
+      return navigate("/user/dashboard");
     } else {
       alert(donorRes.data.message || "Invalid credentials.");
     }

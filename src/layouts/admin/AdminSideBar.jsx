@@ -39,23 +39,12 @@ export default function Sidebar() {
               <span className="font-medium">Dashboard</span>
             </NavLink>
 
-            <NavLink to="/admin/donor" className={({ isActive }) => `${linkClasses} ${isActive ? activeClasses : ""}`}>
+            <NavLink to="/admin/user" className={({ isActive }) => `${linkClasses} ${isActive ? activeClasses : ""}`}>
               <div className="relative">
                 <Users className="w-5 h-5 transition-transform group-hover:scale-110" />
                 <div className="absolute -inset-1 bg-green-400 rounded-full opacity-0 group-hover:opacity-20 transition-opacity"></div>
               </div>
-              <span className="font-medium">Donors</span>
-            </NavLink>
-
-            <NavLink
-              to="/admin/patient"
-              className={({ isActive }) => `${linkClasses} ${isActive ? activeClasses : ""}`}
-            >
-              <div className="relative">
-                <UserPlus className="w-5 h-5 transition-transform group-hover:scale-110" />
-                <div className="absolute -inset-1 bg-purple-400 rounded-full opacity-0 group-hover:opacity-20 transition-opacity"></div>
-              </div>
-              <span className="font-medium">Patients</span>
+              <span className="font-medium">Users</span>
             </NavLink>
 
             <NavLink
@@ -85,7 +74,7 @@ export default function Sidebar() {
       {/* Sign Out Section */}
       <div className="p-6 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-white">
         <NavLink
-          to="/logout"
+          to="/login"
           className={({ isActive }) =>
             `${linkClasses} ${isActive ? activeClasses : ""} hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 hover:text-red-600`
           }
