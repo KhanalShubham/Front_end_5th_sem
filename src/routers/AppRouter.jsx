@@ -1,45 +1,55 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { Route, Routes } from "react-router-dom" // Remove BrowserRouter from imports
+// Assuming these are at root level
 import Homepage from "../pages/Homepage"
 import { LoginPage } from "../pages/LoginPage"
 import SignupPage from "../pages/SignupPage"
+
+// Assuming these are at root level `components/user/`
 import UserDashboard from "../components/user/UserDashboard"
 import MyRequest from "../components/user/MyRequest"
-import UserManagement from "../pages/admin/UserManagement"
-import Fund from "../components/user/FundInfo"
-import Notifications from "../components/user/Notification"
+import UserMessage from "../components/user/UserMessage"
 import MentalHealth from "../components/user/MentalHealth"
-import SettingPage  from "../components/user/SettingsPage"
-//import PatientManagement from "../pages/admin/PatientManagement"
-import RequestManagement from "../pages/admin/RequestManagement"
+import SettingPage from "../components/user/SettingsPage"
+
+// Assuming this is at root level `pages/user/`
+import NotificationsPage from "../pages/user/NotificationsPage"
+
+// Assuming these are at root level layouts/admin/ and pages/admin/
 import AdminMainLayout from "../layouts/admin/adminMainLayout"
-import AdminDashboardManagement from "../components/admin/AdminDashboard"
+import AdminDashboardManagement from "../pages/admin/AdminDashboardManagement"
+import UserManagement from "../pages/admin/UserManagement"
+import RequestManagement from "../pages/admin/RequestManagement"
+import MessageAdmin from "../pages/admin/MessageAdmin"
+
 
 const AppRouter = () => (
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Homepage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
+  // REMOVE <BrowserRouter> HERE! It's already in main.jsx
+  <Routes>
+    <Route path="/" element={<Homepage />} />
+    <Route path="/login" element={<LoginPage />} />
+    <Route path="/signup" element={<SignupPage />} />
 
-      {/* Donor Dashboard */}
-      <Route path="/user/dashboard" element={<UserDashboard />} />
-      <Route path="/user/myrequests" element={<MyRequest/>}/>
-      <Route path="/user/notifications" element={<Notifications/>}/>
-      <Route path="/user/funds" element={<Fund/>}/>
-      <Route path="/user/mental-health" element={<MentalHealth/>}/>
-      <Route path="/user/settings" element={<SettingPage/>}/>
+    {/* User Routes */}
+    <Route path="/user/dashboard" element={<UserDashboard />} />
+    <Route path="/user/myrequests" element={<MyRequest />} />
+    <Route path="/user/notifications" element={<NotificationsPage />} />
+    <Route path="/user/message" element={<UserMessage />} />
+    <Route path="/user/mental-health" element={<MentalHealth />} />
+    <Route path="/user/settings" element={<SettingPage />} />
 
 
-      {/* Admin Routes */}
-      <Route path="/admin/" element={<AdminMainLayout/>}>
-        <Route index element={<AdminDashboardManagement />} />
-        <Route path="user" element={<UserManagement/>}/>
-        {/* <Route path="patient" element={<PatientManagement/>}/> */}
-        <Route path="request" element={<RequestManagement/>}/>
-      </Route>
+    {/* Admin Routes */}
+    <Route path="/admin/" element={<AdminMainLayout />}>
+      <Route index element={<AdminDashboardManagement />} />
+      <Route path="user" element={<UserManagement />} />
+      <Route path="request" element={<RequestManagement />} />
+      <Route path="message" element={<MessageAdmin />} />
+    </Route>
 
-    </Routes>
-  </BrowserRouter>
+    {/* Fallback route for 404 */}
+    <Route path="*" element={<div>404 Not Found</div>} /> {/* Added a generic 404 */}
+  </Routes>
+  // REMOVE </BrowserRouter> HERE!
 )
 
-export default AppRouter
+export default AppRouter;

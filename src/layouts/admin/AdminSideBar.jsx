@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom"
-import { LayoutDashboard, Users, UserPlus, LogOut, GitPullRequest } from "lucide-react"
+import { LayoutDashboard, Users, UserPlus, LogOut, GitPullRequest, MessageCircleHeart } from "lucide-react"
 
 
 export default function Sidebar() {
@@ -56,6 +56,17 @@ export default function Sidebar() {
                 <div className="absolute -inset-1 bg-purple-400 rounded-full opacity-0 group-hover:opacity-20 transition-opacity"></div>
               </div>
               <span className="font-medium">Requests</span>
+            </NavLink>
+
+            <NavLink
+              to="/admin/message"
+              className={({ isActive }) => `${linkClasses} ${isActive ? activeClasses : ""}`}
+            >
+              <div className="relative">
+                <MessageCircleHeart className="w-5 h-5 transition-transform group-hover:scale-110" />
+                <div className="absolute -inset-1 bg-purple-400 rounded-full opacity-0 group-hover:opacity-20 transition-opacity"></div>
+              </div>
+              <span className="font-medium">message</span>
             </NavLink>
           </nav>
         </div>

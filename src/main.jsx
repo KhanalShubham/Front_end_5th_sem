@@ -1,30 +1,28 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ToastContainer, Zoom } from "react-toastify";
-import AppRouter from "./routers/AppRouter";
-import AuthContextProvider from './auth/AuthProvider'
-import "./index.css";
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'react-hot-toast';
 
-const queryClient = new QueryClient()
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
+import AuthContextProvider from './auth/AuthProvider';
+import App from './App';
+// import * as Lame from "lamejs"; // <-- REMOVE THIS
+import './index.css';
+
+const queryClient = new QueryClient();
+const rootElement = document.getElementById('root');
+const root = createRoot(rootElement);
+
+// window.Lame = Lame; // <-- REMOVE THIS
+
+// Render the application.
+root.render(
+  <Router>
     <AuthContextProvider>
       <QueryClientProvider client={queryClient}>
-        <AppRouter />
-        {/* ToastContainer config */}
-        <ToastContainer
-          position="top-center"
-          autoClose={3500}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          pauseOnHover
-          draggable
-          theme="colored"
-          transition={Zoom}
-        />
+        <App />
+        <Toaster position="top-right" reverseOrder={false} />
       </QueryClientProvider>
-      </AuthContextProvider>
-  </StrictMode>
+    </AuthContextProvider>
+  </Router>
 );

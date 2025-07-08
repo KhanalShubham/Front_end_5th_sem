@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { registerUserService } from "../services/authUserServices";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 export const useRegisterUserTan = () => {
   return useMutation({

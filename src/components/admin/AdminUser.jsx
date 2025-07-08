@@ -4,6 +4,7 @@ import { useAdminUser } from "../../hooks/admin/useAdminUser";
 import AddUserModal from "./modal/AdminUserModal";
 import EditUserModal from "./modal/EditUserModal";
 import DeleteUserModal from "./modal/DeleteUserModal";
+import UserDetailModal from "./modal/adminUserViewModal"; // Import the UserDetailModal
 import { getBackendImageUrl } from "../../utils/backend-image";
 import { Toaster } from "react-hot-toast";
 import {
@@ -25,11 +26,12 @@ export default function AdminUser() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false); // State for detail modal
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null); // State for selected user details
   const [searchQuery, setSearchQuery] = useState("");
 
   const { users, isLoading, isError, pagination, setPageNumber, canNextPage, canPreviousPage } = useAdminUser();
-
 
   if (isLoading) {
     return (
@@ -73,11 +75,18 @@ export default function AdminUser() {
     setShowDeleteModal(true);
   };
 
+  const openDetailModal = (user) => {
+    setSelectedUser(user);
+    setShowDetailModal(true);
+  };
+
   const closeAllModals = () => {
     setShowAddModal(false);
     setShowEditModal(false);
     setShowDeleteModal(false);
+    setShowDetailModal(false);
     setSelectedUserId(null);
+    setSelectedUser(null);
   };
 
   const filteredUsers = users.filter((user) => user.name.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -110,6 +119,7 @@ export default function AdminUser() {
         <AddUserModal isOpen={showAddModal} onClose={closeAllModals} />
         <EditUserModal isOpen={showEditModal} onClose={closeAllModals} userId={selectedUserId} />
         <DeleteUserModal isOpen={showDeleteModal} onClose={closeAllModals} userId={selectedUserId} />
+        <UserDetailModal isOpen={showDetailModal} onClose={closeAllModals} user={selectedUser} />
 
         <div className="mb-6 flex justify-end">
           <div className="relative w-full max-w-xs">
@@ -129,7 +139,7 @@ export default function AdminUser() {
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Users</p>
+                  <p className="text-sm font-medium text-gray-600">TotalTen Users</p>
                   <p className="text-3xl font-bold text-gray-900">{pagination.totalCount || users.length}</p>
                 </div>
                 <div className="bg-blue-100 p-3 rounded-full">
@@ -168,12 +178,11 @@ export default function AdminUser() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {filteredUsers.map((user) => (
-            
             <div
               key={user._id}
-              className="bg-white shadow-lg border-0 hover:shadow-xl transition-all duration-200 hover:-translate-y-1 rounded-lg overflow-hidden"
+              className="bg-white shadow-lg border-0 hover:shadow-xl transition-all duration-200 hover:-translate-y-1 rounded-lg overflow-hidden cursor-pointer"
+              onClick={() => openDetailModal(user)} // Open detail modal on card click
             >
-              
               <div className="h-32 bg-gradient-to-r from-blue-100 to-indigo-100 relative">
                 {user.filepath ? (
                   <>
@@ -236,14 +245,20 @@ export default function AdminUser() {
                 </div>
                 <div className="flex space-x-2 pt-4 border-t border-gray-100 mt-4">
                   <button
-                    onClick={() => openEditModal(user._id)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent card click from triggering modal
+                      openEditModal(user._id);
+                    }}
                     className="flex-1 bg-yellow-50 border border-yellow-200 text-yellow-700 hover:bg-yellow-100 hover:border-yellow-300 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center"
                   >
                     <Edit3 className="h-4 w-4 mr-2" />
                     Edit
                   </button>
                   <button
-                    onClick={() => openDeleteModal(user._id)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent card click from triggering modal
+                      openDeleteModal(user._id);
+                    }}
                     className="flex-1 bg-red-50 border border-red-200 text-red-700 hover:bg-red-100 hover:border-red-300 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
