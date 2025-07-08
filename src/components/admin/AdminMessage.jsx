@@ -11,7 +11,6 @@ import {
     PhoneOff, PhoneIncoming, Video, Mic, StopCircle 
 } from 'lucide-react';
 
-// Helper Component for rendering message content
 const MessageContent = ({ message, adminUserId }) => {
     const fileUrl = message.fileUrl ? `http://localhost:5050${message.fileUrl}` : '';
     switch (message.messageType) {
@@ -166,7 +165,7 @@ export default function AdminMessage() {
             peer.on('signal', (signalData) => getSocket().emit('answer-call', { signalData, to: call.from }));
             peer.on('stream', (remoteStream) => { if (otherUserVideo.current) otherUserVideo.current.srcObject = remoteStream; });
             peer.signal(call.signalData);
-        });
+        }).catch(() => toast.error("Could not access camera/microphone."));
     };
     
     const endCall = (shouldEmit = true) => {
@@ -187,17 +186,7 @@ export default function AdminMessage() {
             
             <div className="w-1/3 border-r bg-white flex flex-col">
                 <header className="p-4 border-b font-bold text-lg flex items-center gap-3"><Users/> Conversations</header>
-                <div className="flex-1 overflow-y-auto">
-                    {Object.values(conversations).map(({ userInfo, unreadCount }) => (
-                        <div key={userInfo._id} onClick={() => handleSelectConversation(userInfo._id)}
-                            className={`p-4 cursor-pointer border-l-4 ${selectedUserId === userInfo._id ? 'border-blue-500 bg-blue-50' : 'border-transparent hover:bg-gray-50'}`}>
-                            <div className="flex justify-between">
-                                <span className="font-semibold">{userInfo.name || userInfo.email}</span>
-                                {unreadCount > 0 && <span className="bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">{unreadCount}</span>}
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                <div className="flex-1 overflow-y-auto">{Object.values(conversations).map(({ userInfo, unreadCount }) => (<div key={userInfo._id} onClick={() => handleSelectConversation(userInfo._id)} className={`p-4 cursor-pointer border-l-4 ${selectedUserId === userInfo._id ? 'border-blue-500 bg-blue-50' : 'border-transparent hover:bg-gray-50'}`}><div className="flex justify-between"><span className="font-semibold">{userInfo.name || userInfo.email}</span>{unreadCount > 0 && <span className="bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">{unreadCount}</span>}</div></div>))}</div>
             </div>
 
             <div className="w-2/3 flex flex-col">
@@ -207,34 +196,11 @@ export default function AdminMessage() {
                             <span>{selectedConversation?.userInfo.name}</span>
                             <button onClick={startCallWithUser} className="p-2 rounded-full hover:bg-gray-200" title={`Call ${selectedConversation?.userInfo.name}`}><Video /></button>
                         </header>
-                        <main className="flex-1 p-4 overflow-y-auto bg-gray-50">
-                            {isLoading ? <div className="flex justify-center"><Loader2 className="animate-spin"/></div> : 
-                            <div className="flex flex-col gap-4">
-                                {selectedConversation?.messages.map((msg) => (
-                                    <div key={msg._id} className={`flex ${msg.sender._id === adminUser.id ? 'justify-end' : 'justify-start'}`}>
-                                        <div className={`max-w-[70%] p-3 rounded-lg shadow ${msg.sender._id === adminUser.id ? 'bg-blue-600 text-white' : 'bg-white text-black'}`}>
-                                            <MessageContent message={msg} adminUserId={adminUser.id} />
-                                            <div className="text-xs text-right mt-1 opacity-70">{new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
-                                        </div>
-                                    </div>
-                                ))}
-                                <div ref={messagesEndRef} />
-                            </div>}
-                        </main>
-                        <footer className="p-4 bg-white border-t">
-                            <div className="flex items-center gap-3">
-                                <input ref={fileInputRef} type="file" onChange={handleFileUpload} className="hidden"/>
-                                <button onClick={() => fileInputRef.current.click()} className="p-3 rounded-full hover:bg-gray-200"><Paperclip /></button>
-                                <input type="text" value={text} onChange={e => setText(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSendMessage()} placeholder="Type a message..." className="flex-1 p-3 rounded-full border"/>
-                                {recordingStatus === "recording" ? (<button onClick={stopRecording} className="p-3 bg-red-500 text-white rounded-full animate-pulse"><StopCircle /></button>) : (<button onClick={startRecording} className="p-3 bg-blue-500 text-white rounded-full"><Mic /></button>)}
-                                <button onClick={handleSendMessage} className="p-3 bg-blue-600 text-white rounded-full"><Send /></button>
-                            </div>
-                        </footer>
+                        <main className="flex-1 p-4 overflow-y-auto bg-gray-50">{isLoading ? <div className="flex justify-center"><Loader2 className="animate-spin"/></div> : <div className="flex flex-col gap-4">{selectedConversation?.messages.map((msg) => (<div key={msg._id} className={`flex ${msg.sender._id === adminUser.id ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[70%] p-3 rounded-lg shadow ${msg.sender._id === adminUser.id ? 'bg-blue-600 text-white' : 'bg-white text-black'}`}><MessageContent message={msg} adminUserId={adminUser.id} /><div className="text-xs text-right mt-1 opacity-70">{new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div></div></div>))}{<div ref={messagesEndRef} />}</div>}</main>
+                        <footer className="p-4 bg-white border-t"><div className="flex items-center gap-3"><input ref={fileInputRef} type="file" onChange={handleFileUpload} className="hidden"/><button onClick={() => fileInputRef.current.click()} className="p-3 rounded-full hover:bg-gray-200"><Paperclip /></button><input type="text" value={text} onChange={e => setText(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSendMessage()} placeholder="Type a message..." className="flex-1 p-3 rounded-full border"/>{recordingStatus === "recording" ? (<button onClick={stopRecording} className="p-3 bg-red-500 text-white rounded-full animate-pulse"><StopCircle /></button>) : (<button onClick={startRecording} className="p-3 bg-blue-500 text-white rounded-full"><Mic /></button>)}<button onClick={handleSendMessage} className="p-3 bg-blue-600 text-white rounded-full"><Send /></button></div></footer>
                     </>
                 ) : (
-                    <div className="flex-1 flex items-center justify-center text-gray-400">
-                        <MessageSquareText className="h-10 w-10 mr-4"/> Select a conversation to start chatting.
-                    </div>
+                    <div className="flex-1 flex items-center justify-center text-gray-400"><MessageSquareText className="h-10 w-10 mr-4"/> Select a conversation to start chatting.</div>
                 )}
             </div>
         </div>
