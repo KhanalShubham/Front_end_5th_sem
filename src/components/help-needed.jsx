@@ -7,7 +7,6 @@ import Badge from "./badge"
 import ProgressBar from "./progress-bar"
 import { Loader2, AlertTriangle } from "lucide-react"
 
-// Helper to format numbers into Indian Rupee currency string (e.g., ₹5,00,000)
 const formatCurrency = (amount) => {
   if (typeof amount !== 'number') {
     amount = 0;
@@ -20,18 +19,14 @@ const formatCurrency = (amount) => {
   }).format(amount);
 };
 
-// Helper to get the full image URL from the backend
 const getBackendImageUrl = (filePath) => {
-  // Use a fallback placeholder if no image path is provided
   if (!filePath) return "/placeholder.svg?height=200&width=300";
 
-  // IMPORTANT: This uses Vite's syntax for environment variables.
-  // Your frontend .env file must have VITE_API_BASE_URL=http://localhost:5050
+
   const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5050";
   return `${backendUrl}/${filePath.replace(/\\/g, "/")}`;
 };
 
-// A simple skeleton card component for the loading state
 const SkeletonCard = () => (
   <div className="bg-white p-4 rounded-lg shadow-md animate-pulse">
     <div className="bg-gray-300 h-48 w-full rounded-md mb-4"></div>
@@ -77,7 +72,6 @@ const HelpNeededSection = () => {
       setIsLoading(true);
       setIsError(false);
       try {
-        // CORRECTED: Use Vite's syntax for environment variables
         const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5050";
         const response = await fetch(`${backendUrl}/api/campaigns`);
         
@@ -97,7 +91,7 @@ const HelpNeededSection = () => {
     };
 
     fetchCampaigns();
-  }, []); // Empty dependency array ensures this runs once when the component mounts
+  }, []);
 
 
   return (
@@ -132,7 +126,6 @@ const HelpNeededSection = () => {
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {campaigns.map((campaign, index) => {
-              // Calculate progress. Guard against division by zero.
               const progress = campaign.goalAmount > 0 
                 ? (campaign.raisedAmount / campaign.goalAmount) * 100 
                 : 0;
@@ -157,8 +150,6 @@ const HelpNeededSection = () => {
                       {campaign.title}
                     </h3>
                     
-                    {/* NOTE: The progress bar will reflect the 'raisedAmount' from the API.
-                        If the backend is sending 0, the progress will be 0%. */}
                     <ProgressBar progress={isVisible ? progress : 0} className="mb-3" />
 
                     <div className="space-y-2 text-sm">
