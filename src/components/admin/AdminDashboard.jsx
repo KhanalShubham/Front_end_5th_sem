@@ -26,8 +26,13 @@ import {
   Pie,
 } from "recharts"
 import { useAdminUser } from "../../hooks/admin/useAdminUser"
+import React, { useState, useContext } from 'react';
+import AdminSendNotificationModal from './modal/AdminSendNotificationModal';
+import { AuthContext } from '../../auth/AuthProvider';
 
 export default function AdminDashboard() {
+  const [showNotifModal, setShowNotifModal] = useState(false);
+  const { token } = useContext(AuthContext);
   const { users, isLoading: usersLoading, isError: usersError } = useAdminUser()
 
   if (usersLoading) {
@@ -262,6 +267,11 @@ export default function AdminDashboard() {
             )}
           </div>
         </div>
+
+        <button className="bg-blue-600 text-white px-4 py-2 rounded font-semibold mb-4" onClick={() => setShowNotifModal(true)}>
+          Send Notification to All Users
+        </button>
+        <AdminSendNotificationModal isOpen={showNotifModal} onClose={() => setShowNotifModal(false)} token={token} userId={null} />
 
       </div>
     </div>

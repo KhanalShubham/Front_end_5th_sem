@@ -1,10 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useAdminUser } from "../../hooks/admin/useAdminUser";
 import AddUserModal from "./modal/AdminUserModal";
 import EditUserModal from "./modal/EditUserModal";
 import DeleteUserModal from "./modal/DeleteUserModal";
 import UserDetailModal from "./modal/adminUserViewModal"; // Import the UserDetailModal
+import AdminSendNotificationModal from './modal/AdminSendNotificationModal';
 import { getBackendImageUrl } from "../../utils/backend-image";
 import { Toaster } from "react-hot-toast";
 import {
@@ -21,6 +22,7 @@ import {
   Search,
   ImageIcon,
 } from "lucide-react";
+import { AuthContext } from '../../auth/AuthProvider';
 
 export default function AdminUser() {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -30,6 +32,8 @@ export default function AdminUser() {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null); // State for selected user details
   const [searchQuery, setSearchQuery] = useState("");
+  const [notifUserId, setNotifUserId] = useState(null);
+  const { token } = useContext(AuthContext);
 
   const { users, isLoading, isError, pagination, setPageNumber, canNextPage, canPreviousPage } = useAdminUser();
 
@@ -120,6 +124,7 @@ export default function AdminUser() {
         <EditUserModal isOpen={showEditModal} onClose={closeAllModals} userId={selectedUserId} />
         <DeleteUserModal isOpen={showDeleteModal} onClose={closeAllModals} userId={selectedUserId} />
         <UserDetailModal isOpen={showDetailModal} onClose={closeAllModals} user={selectedUser} />
+        <AdminSendNotificationModal isOpen={!!notifUserId} onClose={() => setNotifUserId(null)} token={token} userId={notifUserId} />
 
         <div className="mb-6 flex justify-end">
           <div className="relative w-full max-w-xs">
@@ -263,6 +268,16 @@ export default function AdminUser() {
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent card click from triggering modal
+                      setNotifUserId(user._id);
+                    }}
+                    className="flex-1 bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100 hover:border-purple-300 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center"
+                  >
+                    <Activity className="h-4 w-4 mr-2" />
+                    Notify
                   </button>
                 </div>
               </div>

@@ -2,7 +2,13 @@ import React, { createContext, useState, useEffect, useContext, useCallback } fr
 import { getSocket } from '../services/socketService';
 import { useSocket } from '../hooks/useSocket';
 import { showInAppNotification } from '../services/admin/notificationDisplayService';
-import { AuthContext } from '../auth/AuthProvider'; // <-- IMPORTANT: Import AuthContext
+import { AuthContext } from '../auth/AuthProvider';
+import {
+  fetchNotifications,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+  createNotification,
+} from '../api/notificationApi';
 
 export const NotificationContext = createContext(null);
 
@@ -14,76 +20,79 @@ export const useNotifications = () => {
   return context;
 };
 
-// --- REMOVED TOKEN PROP ---
 export const NotificationProvider = ({ children }) => {
-  // --- FIXED: Get token from AuthContext ---
   const { token } = useContext(AuthContext);
-  
   const [notifications, setNotifications] = useState([]);
-  const { isConnected } = useSocket(token); // Pass the token from AuthContext to the hook
+  const { isConnected } = useSocket(token);
+  const [loading, setLoading] = useState(true);
 
-  console.log("NotificationProvider: Rendered. isConnected:", isConnected, "Token from AuthContext:", token ? "Present" : "Missing");
-
+  // Fetch notifications from backend on mount
   useEffect(() => {
-    console.log("NotificationProvider useEffect: Effect running. isConnected:", isConnected);
+    if (!token) return;
+    setLoading(true);
+    fetchNotifications(token)
+      .then(setNotifications)
+      .catch(() => setNotifications([]))
+      .finally(() => setLoading(false));
+  }, [token]);
 
-    // If socket is not connected, there's nothing to do.
-    if (!isConnected) {
-      return;
-    }
-
+  // Listen for new notifications via socket
+  useEffect(() => {
+    if (!isConnected || !token) return;
     const socket = getSocket();
-    if (!socket) {
-      console.error("NotificationProvider useEffect: isConnected is true, but getSocket() returned null.");
-      return;
-    }
+    if (!socket) return;
 
-    console.log("NotificationProvider useEffect: Socket is connected. Setting up 'inAppNotification' listener.");
-
-    const onInAppNotification = (payload) => {
-      console.log("NotificationProvider: Received 'inAppNotification' event. Payload:", payload);
+    const onInAppNotification = async (payload) => {
       showInAppNotification(payload);
-
-      const newNotification = {
-        id: payload.data?.requestId || payload.data?.userId || Date.now().toString(),
-        title: payload.title,
-        body: payload.body,
-        timestamp: payload.timestamp || new Date().toISOString(),
-        read: false,
-        data: payload.data || {},
-      };
-      setNotifications(prev => [newNotification, ...prev]);
+      // Save to backend for persistence
+      try {
+        const saved = await createNotification({
+          userId: null, // backend will use req.user.id
+          title: payload.title,
+          body: payload.body,
+          data: payload.data || {},
+        }, token);
+        setNotifications((prev) => [saved, ...prev]);
+      } catch {
+        // fallback: add to local state if backend fails
+        setNotifications((prev) => [{
+          id: payload.data?.requestId || payload.data?.userId || Date.now().toString(),
+          title: payload.title,
+          body: payload.body,
+          timestamp: payload.timestamp || new Date().toISOString(),
+          read: false,
+          data: payload.data || {},
+        }, ...prev]);
+      }
     };
-    
-    // Attach listener
     socket.on('inAppNotification', onInAppNotification);
+    return () => socket.off('inAppNotification', onInAppNotification);
+  }, [isConnected, token]);
 
-    // Cleanup function
-    return () => {
-      console.log("NotificationProvider useEffect cleanup: Unsubscribing from 'inAppNotification'.");
-      socket.off('inAppNotification', onInAppNotification);
-    };
-  }, [isConnected]); // This effect now only depends on the connection status.
+  // Mark as read (sync with backend)
+  const markAsRead = useCallback(async (notificationId) => {
+    setNotifications((prev) => prev.map((notif) => notif._id === notificationId || notif.id === notificationId ? { ...notif, read: true } : notif));
+    if (token) {
+      try { await markNotificationAsRead(notificationId, token); } catch {}
+    }
+  }, [token]);
 
-  const markAsRead = useCallback((notificationId) => {
-    setNotifications(prev =>
-      prev.map(notif =>
-        notif.id === notificationId ? { ...notif, read: true } : notif
-      )
-    );
-  }, []);
+  // Mark all as read (sync with backend)
+  const markAllAsRead = useCallback(async () => {
+    setNotifications((prev) => prev.map((notif) => ({ ...notif, read: true })));
+    if (token) {
+      try { await markAllNotificationsAsRead(token); } catch {}
+    }
+  }, [token]);
 
-  const markAllAsRead = useCallback(() => {
-    setNotifications(prev => prev.map(notif => ({ ...notif, read: true })));
-  }, []);
-
-  const unreadCount = notifications.filter(notif => !notif.read).length;
+  const unreadCount = notifications.filter((notif) => !notif.read).length;
 
   const contextValue = {
     notifications,
     unreadCount,
     markAsRead,
     markAllAsRead,
+    loading,
   };
 
   return (

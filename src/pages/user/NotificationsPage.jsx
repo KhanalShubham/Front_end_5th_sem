@@ -7,7 +7,15 @@ import { useNotifications } from '../../contexts/NotificationContext'; // Path f
 import { Bell, Check, MailOpen, AlertTriangle, ArrowLeft } from 'lucide-react';
 
 export default function NotificationsPage() {
-    const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
+    const { notifications, unreadCount, markAsRead, markAllAsRead, loading } = useNotifications();
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+                <div className="text-xl text-gray-600">Loading notifications...</div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6 lg:p-8 flex flex-col items-center">
