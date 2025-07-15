@@ -1,5 +1,6 @@
 "use client"
 
+import React from 'react';
 import { Link } from "react-router-dom"
 import { LayoutDashboard, MessageSquare, Bell, Heart, Smile, Settings, Calendar, ArrowRight, Sparkles } from 'lucide-react'
 

@@ -1,8 +1,9 @@
 "use client"
 
+import React from 'react';
 import { Heart, Users, Shield } from "lucide-react"
 import { useEffect, useState } from "react"
-import Card from "./card"
+import Card from "./dashboardCard"
 
 const ServicesSection = () => {
   const [isVisible, setIsVisible] = useState(false)

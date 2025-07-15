@@ -1,3 +1,5 @@
+import React from 'react';
+
 const Badge = ({ children, variant = "primary", className = "" }) => {
   const variants = {
     primary: "bg-green-100 text-green-600",

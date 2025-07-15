@@ -1,19 +1,38 @@
-const Card = ({ children, className = "", hover = true, padding = "medium", ...props }) => {
-  const baseClasses = "bg-white rounded-lg shadow-md border border-gray-100"
-  const hoverClasses = hover ? "hover:shadow-2xl transition-all duration-500 hover:scale-105 hover:-translate-y-2" : ""
+// src/components/ui/card.jsx
+import React from "react"
 
-  const paddings = {
-    none: "",
-    small: "p-4",
-    medium: "p-6",
-    large: "p-8",
-  }
-
+// Main Card container
+export function Card({ children, className, ...props }) {
   return (
-    <div className={`${baseClasses} ${hoverClasses} ${paddings[padding]} ${className}`} {...props}>
+    <div className={`border rounded-lg shadow-sm ${className}`} {...props}>
       {children}
     </div>
   )
 }
 
-export default Card
+// Card Header
+export function CardHeader({ children, className, ...props }) {
+  return (
+    <div className={`p-6 ${className}`} {...props}>
+      {children}
+    </div>
+  )
+}
+
+// Card Title
+export function CardTitle({ children, className, ...props }) {
+  return (
+    <h3 className={`text-lg font-semibold ${className}`} {...props}>
+      {children}
+    </h3>
+  )
+}
+
+// Card Content
+export function CardContent({ children, className, ...props }) {
+  return (
+    <div className={`p-6 pt-0 ${className}`} {...props}>
+      {children}
+    </div>
+  )
+}
