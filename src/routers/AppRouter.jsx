@@ -18,6 +18,7 @@ import MessageAdmin from "../pages/admin/MessageAdmin"
 import DonationPage from "../pages/DonationPage"
 import DonationSuccessPage from "../pages/DonationSuccessPage";
 import DonationFailurePage from "../pages/DonationFailurePage";
+import DonationsManagement from "../pages/admin/DonationsManagement";
 
 
 const AppRouter = () => (
@@ -52,6 +53,7 @@ const AppRouter = () => (
       <Route path="user" element={<UserManagement />} />
       <Route path="request" element={<RequestManagement />} />
       <Route path="message" element={<MessageAdmin />} />
+      <Route path="donations" element={<DonationsManagement />} />
     </Route>
 
     {/* --- Fallback Route for 404 --- */}
