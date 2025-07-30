@@ -1,15 +1,15 @@
 "use client";
-import React from 'react';
+import React, { useRef } from 'react'; // <-- Import useRef
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useLogin } from "../../hooks/useLoginUserTan"; // <-- Import the new hook
+import { useLogin } from "../../hooks/useLoginUserTan";
 import { Heart, Mail, Lock } from "lucide-react";
+import ReCAPTCHA from "react-google-recaptcha"; // <-- Import ReCAPTCHA
 
 const LoginForm = () => {
-    // Use our new hook to get the mutation function and pending state.
-    // All complex logic (API calls, toasts, navigation) is now in the hook.
     const { mutate: attemptLogin, isPending } = useLogin();
+    const recaptchaRef = useRef(null); // <-- Create a ref for reCAPTCHA
 
     const formik = useFormik({
         initialValues: { email: "", password: "", rememberMe: false },
@@ -17,9 +17,23 @@ const LoginForm = () => {
             email: Yup.string().email("Invalid email address").required("Email is required"),
             password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
         }),
-        // The onSubmit handler is now extremely simple.
         onSubmit: (values) => {
-            attemptLogin({ email: values.email, password: values.password });
+            const recaptchaToken = recaptchaRef.current.getValue();
+            if (!recaptchaToken) {
+                // You can replace this with a more user-friendly notification
+                alert("Please complete the reCAPTCHA verification.");
+                return;
+            }
+
+            // Send all data, including the reCAPTCHA token, to the backend
+            attemptLogin({
+                email: values.email,
+                password: values.password,
+                "g-recaptcha-response": recaptchaToken // <-- Add token here
+            });
+            
+            // Reset the reCAPTCHA after submission
+            recaptchaRef.current.reset();
         },
     });
 
@@ -34,6 +48,7 @@ const LoginForm = () => {
             </div>
 
             <form onSubmit={formik.handleSubmit} className="space-y-4">
+                {/* Email and Password fields remain the same */}
                 <div className="space-y-1">
                     <label className="block text-sm font-semibold">Email Address</label>
                     <div className="relative">
@@ -62,6 +77,8 @@ const LoginForm = () => {
                     </div>
                     {formik.touched.password && formik.errors.password && <div className="text-red-600 text-xs mt-1">{formik.errors.password}</div>}
                 </div>
+
+                {/* Remember Me and Forgot Password remain the same */}
                 <div className="flex items-center justify-between">
                     <label className="flex items-center space-x-2">
                         <input type="checkbox" name="rememberMe" {...formik.getFieldProps('rememberMe')} />
@@ -69,6 +86,15 @@ const LoginForm = () => {
                     </label>
                     <Link to="/forgot-password" className="text-sm font-medium text-green-600">Forgot password?</Link>
                 </div>
+
+                {/* ## Add the ReCAPTCHA component here ## */}
+                <div className="flex justify-center">
+                    <ReCAPTCHA
+                        ref={recaptchaRef}
+                        sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                    />
+                </div>
+
                 <button
                     type="submit"
                     disabled={isPending}

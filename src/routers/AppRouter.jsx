@@ -1,25 +1,44 @@
-import { Route, Routes } from "react-router-dom"
-import Homepage from "../pages/Homepage"
-import { LoginPage } from "../pages/LoginPage"
-import SignupPage from "../pages/SignupPage"
-import UserDashboard from "../components/user/UserDashboard"
-import MyRequest from "../components/user/MyRequest"
-import UserMessage from "../components/user/UserMessage"
-import MentalHealth from "../components/user/MentalHealth"
-import SettingPage from "../components/user/SettingsPage"
-import NotificationsPage from "../pages/user/NotificationsPage"
-import AdminMainLayout from "../layouts/admin/adminMainLayout"
-import AdminDashboardManagement from "../pages/admin/AdminDashboardManagement"
-import UserManagement from "../pages/admin/UserManagement"
-import RequestManagement from "../pages/admin/RequestManagement"
-import MessageAdmin from "../pages/admin/MessageAdmin"
+// src/AppRouter.jsx
 
-// 1. Import the new DonationPage component
-import DonationPage from "../pages/DonationPage"
+import { Route, Routes, Navigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../auth/AuthProvider"; // Adjust path if 
+
+
+// Import Layouts
+import UserLayout from "../layouts/user/UserLayout"; // <-- Import the new layout
+import AdminMainLayout from "../layouts/admin/adminMainLayout";
+
+// Import Pages & Components
+import Homepage from "../pages/Homepage";
+import { LoginPage } from "../pages/LoginPage";
+import SignupPage from "../pages/SignupPage";
+import DonationPage from "../pages/DonationPage";
 import DonationSuccessPage from "../pages/DonationSuccessPage";
 import DonationFailurePage from "../pages/DonationFailurePage";
+import NotificationsPage from "../pages/user/NotificationsPage";
+
+// User Components
+import UserDashboard from "../components/user/UserDashboard";
+import MyRequest from "../components/user/MyRequest";
+import UserMessage from "../components/user/UserMessage";
+import MentalHealth from "../components/user/MentalHealth";
+import SettingsPage from "../components/user/SettingsPage";
+import NotFoundPage from "../components/notFoundPage";
+
+// Admin Pages
+import AdminDashboardManagement from "../pages/admin/AdminDashboardManagement";
+import UserManagement from "../pages/admin/UserManagement";
+import RequestManagement from "../pages/admin/RequestManagement";
+import MessageAdmin from "../pages/admin/MessageAdmin";
 import DonationsManagement from "../pages/admin/DonationsManagement";
 
+// Protected Route HOC
+function ProtectedRoute({ children }) {
+  const { isAuthenticated, loading } = useContext(AuthContext);
+  if (loading) return <div>Loading...</div>; // Or a loading spinner
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+}
 
 const AppRouter = () => (
   <Routes>
@@ -27,28 +46,36 @@ const AppRouter = () => (
     <Route path="/" element={<Homepage />} />
     <Route path="/login" element={<LoginPage />} />
     <Route path="/signup" element={<SignupPage />} />
-
-    {/*
-      2. Add the route for the donation page here.
-      It's a public route, so anyone can access it.
-      The ':campaignId' part makes the URL dynamic.
-    */}
     <Route path="/donate/:campaignId" element={<DonationPage />} />
     <Route path="/donation/success" element={<DonationSuccessPage />} />
     <Route path="/donation/failure" element={<DonationFailurePage />} />
 
-
-    {/* --- User Routes --- */}
-    <Route path="/user/dashboard" element={<UserDashboard />} />
-    <Route path="/user/myrequests" element={<MyRequest />} />
-    <Route path="/user/notifications" element={<NotificationsPage />} />
-    <Route path="/user/message" element={<UserMessage />} />
-    <Route path="/user/mental-health" element={<MentalHealth />} />
-    <Route path="/user/settings" element={<SettingPage />} />
-
+    {/* --- User Routes (Nested under the new UserLayout) --- */}
+    <Route
+      path="/user"
+      element={
+        <ProtectedRoute>
+          <UserLayout />
+        </ProtectedRoute>
+      }
+    >
+      <Route path="dashboard" element={<UserDashboard />} />
+      <Route path="requests" element={<MyRequest />} /> {/* Path changed to match sidebar */}
+      <Route path="notifications" element={<NotificationsPage />} />
+      <Route path="message" element={<UserMessage />} />
+      <Route path="mental-health" element={<MentalHealth />} />
+      <Route path="settings" element={<SettingsPage />} />
+    </Route>
 
     {/* --- Admin Routes (nested inside a layout) --- */}
-    <Route path="/admin/" element={<AdminMainLayout />}>
+    <Route
+      path="/admin"
+      element={
+        <ProtectedRoute>
+          <AdminMainLayout />
+        </ProtectedRoute>
+      }
+    >
       <Route index element={<AdminDashboardManagement />} />
       <Route path="user" element={<UserManagement />} />
       <Route path="request" element={<RequestManagement />} />
@@ -57,8 +84,8 @@ const AppRouter = () => (
     </Route>
 
     {/* --- Fallback Route for 404 --- */}
-    <Route path="*" element={<div><h1>404 Not Found</h1><p>The page you are looking for does not exist.</p></div>} />
+    <Route path="*" element={<NotFoundPage />} />
   </Routes>
-)
+);
 
 export default AppRouter;
